@@ -575,3 +575,7 @@ void wb_wakeup_delayed(struct bdi_writeback *wb)
 	spin_unlock_bh(&wb->work_lock);
 }
 ```
+
+延伸阅读:
+
+* [fadvise64_64中POSIX_FADV_DONTNEED选项作用及流程分析](https://jackchou90.github.io/2017/02/25/fadvise64-64-posix-fadv-dontneed.html)

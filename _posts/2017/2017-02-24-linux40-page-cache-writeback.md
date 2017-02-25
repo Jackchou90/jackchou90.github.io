@@ -363,7 +363,7 @@ struct worker {
 
 >mm/backing-dev.c
 
-bdi_wq是内核页回写机制(不同于fadvise64系统调用NO_NEED, 该系统调用直接使用mapping->a_ops->writepage刷脏页,而不通过bdi_wq来退后执行)的工作项对应的工作队列指针，内核页回写机制会以(延时)工作项的形式添加到该工作队列(对应的工作池中的队列)中.
+bdi_wq是内核页回写机制(不同于fadvise64_64系统调用POSIX_FADV_DONTNEED选项, 该系统调用直接使用mapping->a_ops->writepage刷脏页,而不通过bdi_wq来退后执行)的工作项对应的工作队列指针，内核页回写机制会以(延时)工作项的形式添加到该工作队列(对应的工作池中的队列)中.
 
 #### 定义全局bdi_wq指针。
 

@@ -537,7 +537,10 @@ void wb_workfn(struct work_struct *work)
        => writeback_sb_inodes
         => __writeback_single_inode
          => do_writepages
-          => generic_writepages
+          1) mapping->a_ops->writepages如果初始化，调用该writepages钩子函数回写页面
+          2) mapping->a_ops->writepages没有初始化，调用generic_writepages回写页面
+          
+          generic_writepages
            => __writepage
             => int ret = mapping->a_ops->writepage(page, wbc);  //调用具体文件系统address_space->a_ops->writepage函数，最终提交到存储介质.
 

@@ -28,8 +28,11 @@ POSIX_FADV_DONTNEED选项是应用通知内核，与文件描述符 fd 关联的
     
     SYSCALL_DEFINE4(fadvise64_64, int, fd, loff_t, offset, loff_t, len, int, advice)
      => __filemap_fdatawrite_range
-      => do_writepages          //该函数很重要，因为它也是内核页缓存回写机制的底层调用函数。
-       => generic_writepages
+      => do_writepages          //该函数很重要，它是内核页缓存回写机制的底层通用调用函数。
+         1) mapping->a_ops->writepages如果初始化，调用该writepages钩子函数回写页面
+         2) mapping->a_ops->writepages没有初始化，调用generic_writepages回写页面
+       
+      generic_writepages
         => write_cache_pages
          => __writepage
           => int ret = mapping->a_ops->writepage(page, wbc); //最终调用具体文件系统address_space_operations->writepage钩子函数，将page中的数据写到介质中.

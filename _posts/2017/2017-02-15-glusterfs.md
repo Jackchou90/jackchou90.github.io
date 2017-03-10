@@ -343,9 +343,16 @@ glusterfs内核态FUSE和用户态FUSE交互过程中，使用到的**重要数�
 
                        2) fuse_request_send //同步发送请求接口, 最终阻塞在req->waitq队列上.
 
-### FUSE 页回写机制详解
+后续操作流程类似FUSE创建新文件，略去.   
 
-#### FUSE 将用户空间数据写入页缓存
+
+## FUSE 页回写机制详解
+
+#### FUSE 将用户空间数据写入页缓存  
+
+写进程将数据写入页缓存并标记为脏页
+
+       同FUSE写操作流程
         ......
         => ret = filp->f_op->write_iter(&kiocb, &iter); //进入FUSE文件系统中
          => fuse_file_write_iter
@@ -364,7 +371,7 @@ glusterfs内核态FUSE和用户态FUSE交互过程中，使用到的**重要数�
                      => wait_event(fi->page_waitq, !fuse_page_is_writeback(inode, index)); //等待在fi->page_waitq上，该队列被唤醒意味页缓存回写完成.
                   2) fuse_send_write //发送请求实施函数，最终将req添加到pending队列上，然后将当前进程阻塞在req->waitq等待队列上.
 
-后续操作流程类似FUSE创建新文件，略去, 此处重点讲写操作时，页缓存回写涉及到FUSE中的流程,
+后续操作流程类似FUSE创建新文件，略去, 下面重点讲写进程将数据写入页缓存并标记为脏页后，页缓存回写机制涉及到FUSE中的流程,
 
 #### FUSE 页缓存回写flush进程，将页缓存中脏数据回写到底层
 
